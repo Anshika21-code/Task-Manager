@@ -8,7 +8,7 @@ function App() {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [filter, setFilter] = useState('all'); // all | active | completed
+  const [filter, setFilter] = useState('all');
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
 
@@ -89,9 +89,25 @@ function App() {
     filter === 'all' ? true : filter === 'completed' ? t.completed : !t.completed
   );
 
+  const doneCount = tasks.filter(t => t.completed).length;
+  const pendingCount = tasks.filter(t => !t.completed).length;
+  // Load from localStorage
+useEffect(() => {
+  const saved = JSON.parse(localStorage.getItem("tasks"));
+  if (saved) setTasks(saved);
+}, []);
+
+// Save to localStorage
+useEffect(() => {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}, [tasks]);
+
   return (
     <div className="container">
-      <h1>Task Manager</h1>
+      <div className="header">
+        <h1>Task Manager</h1>
+        <p>Stay on top of what matters</p>
+      </div>
 
       <form onSubmit={addTask} className="add-form">
         <input
@@ -99,15 +115,38 @@ function App() {
           onChange={e => setTitle(e.target.value)}
           placeholder="Add a new task..."
         />
-        <button type="submit">Add</button>
+        <button type="submit">Add task</button>
       </form>
 
       {error && <p className="error">{error}</p>}
 
+      <div className="stats">
+        <div className="stat-card">
+          <div className="stat-label">Total</div>
+          <div className="stat-value">{tasks.length}</div>
+        </div>
+        <div className="stat-card done">
+          <div className="stat-label">Completed</div>
+          <div className="stat-value">{doneCount}</div>
+        </div>
+        <div className="stat-card pending">
+          <div className="stat-label">Pending</div>
+          <div className="stat-value">{pendingCount}</div>
+        </div>
+      </div>
+
       <div className="filters">
-        {['all', 'active', 'completed'].map(f => (
-          <button key={f} onClick={() => setFilter(f)} className={filter === f ? 'active' : ''}>
-            {f.charAt(0).toUpperCase() + f.slice(1)}
+        {[
+          { key: 'all', label: 'All' },
+          { key: 'active', label: 'Active' },
+          { key: 'completed', label: 'Completed' },
+        ].map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setFilter(key)}
+            className={filter === key ? 'active' : ''}
+          >
+            {label}
           </button>
         ))}
       </div>
@@ -134,14 +173,22 @@ function App() {
                     onKeyDown={e => e.key === 'Enter' && saveEdit(task.id)}
                     autoFocus
                   />
-                  <button onClick={() => saveEdit(task.id)}>Save</button>
-                  <button onClick={() => setEditingId(null)}>Cancel</button>
+                  <button className="btn-save" onClick={() => saveEdit(task.id)}>Save</button>
+                  <button className="btn-cancel" onClick={() => setEditingId(null)}>Cancel</button>
                 </>
               ) : (
                 <>
                   <span className="task-title">{task.title}</span>
-                  <button onClick={() => { setEditingId(task.id); setEditTitle(task.title); }}>Edit</button>
-                  <button className="delete" onClick={() => deleteTask(task.id)}>Delete</button>
+                  {task.completed && <span className="badge-done">Done</span>}
+                  <button
+                    className="btn-edit"
+                    onClick={() => { setEditingId(task.id); setEditTitle(task.title); }}
+                  >
+                    Edit
+                  </button>
+                  <button className="btn-delete" onClick={() => deleteTask(task.id)}>
+                    Delete
+                  </button>
                 </>
               )}
             </li>
