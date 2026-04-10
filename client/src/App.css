@@ -295,3 +295,17 @@
   box-shadow: 3px 3px 7px #c8cad4, -3px -3px 7px #ffffff;
 }
 .btn-delete:hover { color: #dc2626; }
+
+.dark {
+  background: #0f172a;
+  color: white;
+}
+
+.dark .task-item {
+  background: #1e293b;
+}
+
+.dark .stat-card {
+  background: #1e293b;
+}
+

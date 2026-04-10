@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
+
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
   const [filter, setFilter] = useState('all');
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
+  // const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => { fetchTasks(); }, []);
 
@@ -91,6 +93,30 @@ function App() {
 
   const doneCount = tasks.filter(t => t.completed).length;
   const pendingCount = tasks.filter(t => !t.completed).length;
+
+//   let insight;
+
+// if (tasks.length === 0) {
+//   insight = {
+//     icon: <Rocket size={20} />,
+//     text: "Start small. Add your first task.",
+//   };
+// } else if (doneCount === tasks.length) {
+//   insight = {
+//     icon: <Flame size={20} />,
+//     text: "All tasks completed! You're on fire!",
+//   };
+// } else if (doneCount > pendingCount) {
+//   insight = {
+//     icon: <TrendingUp size={20} />,
+//     text: "Great progress! Keep going!",
+//   };
+// } else {
+//   insight = {
+//     icon: <CheckCircle size={20} />,
+//     text: "Stay focused — you got this!",
+//   };
+// }
   // Load from localStorage
 useEffect(() => {
   const saved = JSON.parse(localStorage.getItem("tasks"));
@@ -108,6 +134,8 @@ useEffect(() => {
         <h1>Task Manager</h1>
         <p>Stay on top of what matters</p>
       </div>
+
+      
 
       <form onSubmit={addTask} className="add-form">
         <input
@@ -134,6 +162,10 @@ useEffect(() => {
           <div className="stat-value">{pendingCount}</div>
         </div>
       </div>
+      <div className="insight-box">
+  {/* <span className="insight-icon">{insight.icon}</span>
+  <span>{insight.text}</span> */}
+</div>
 
       <div className="filters">
         {[
